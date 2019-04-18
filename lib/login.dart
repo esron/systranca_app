@@ -6,6 +6,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _usernameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,12 +18,28 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 80.0),
             Column(
               children: <Widget>[
-                Image.asset('assets/diamond.png'),
                 SizedBox(height: 16.0),
-                Text('SHRINE'),
+                Text('SYSTRANCA'),
               ],
             ),
             SizedBox(height: 120.0),
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                filled: true,
+                labelText: 'Username',
+              ),
+            ),
+            ButtonBar(
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('NEXT'),
+                  onPressed:(){
+                    Navigator.pop(context);
+                  }
+                ),
+              ],
+            )
           ],
         ),
       ),
