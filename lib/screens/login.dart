@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
 
+const URL =  'https://';
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
   @override
@@ -13,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
 
-  bool _isLogging = false;
+  bool _isRequesting = false;
   bool _isLocked = true;
 
   @override
@@ -48,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: Center(
-                  child: _isLogging
+                  child: _isRequesting
                       ? CircularProgressIndicator(
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.white),
@@ -102,14 +107,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       fontSize: 20.0, color: Colors.white),
                                   onFieldSubmitted: (value) async {
                                     _usernameFocus.unfocus();
-                                    await submitLogin(context);
+                                    await submitRequest(context);
                                   }),
                               Container(
                                 height: 50.0,
                                 margin: const EdgeInsets.only(top: 32.0),
                                 child: RaisedButton(
                                   onPressed: () async {
-                                    await submitLogin(context);
+                                    await submitRequest(context);
                                   },
                                   color: Colors.amber[900],
                                   child: Text(
@@ -144,20 +149,20 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> submitLogin(context) async {
+  Future<void> submitRequest(context) async {
     if (_formKey.currentState.validate()) {
       setState(() {
         _isLocked = false;
-        _isLogging = true;
+        _isRequesting = true;
       });
       try {
         await new Future.delayed(const Duration(seconds: 5));
-        setState(() {
-          _isLocked = true;
-        });
+        // http.Response response = await http.get(URL);
+
+        // return json.decode(response.body);
       } catch (error) {} finally {
         setState(() {
-          _isLogging = false;
+          _isRequesting = false;
         });
       }
     }
