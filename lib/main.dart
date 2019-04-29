@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:systranca_app/routes.dart';
 
-import 'package:systranca_app/app.dart';
+void main() {
+  String _initialRoute = '/';
 
-void main() => runApp(ShrineApp());
+  runApp(
+    MaterialApp(
+      title: 'Shrine',
+      initialRoute: _initialRoute,
+      routes: routes
+    )
+  );
+}
