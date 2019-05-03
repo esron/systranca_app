@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'SYSTRANCA',
+          'SysTranca',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.amber[900],
