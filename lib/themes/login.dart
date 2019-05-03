@@ -6,7 +6,6 @@ final loginTheme = ThemeData(
   primarySwatch: Colors.blue,
   dividerColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,
-  // errorColor: Colors.pink[300],
   cursorColor: Colors.white,
   brightness: Brightness.light,
 
