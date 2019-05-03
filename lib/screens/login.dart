@@ -160,7 +160,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
         http.Response response = await http.get(uriRequest);
 
-        return json.decode(response.body);
+        Navigator.pushNamed(
+          context,
+          '/home',
+          arguments: json.decode(response.body)
+        );
+
+        return;
       } catch (error) {
         print(error);
       } finally {
