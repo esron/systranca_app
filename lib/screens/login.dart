@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
 
-const URL =  'https://';
+final apiUrl = DotEnv().env['API_URL'];
+
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
   @override
@@ -98,10 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: 'Username',
-                                    // hintText: 'as',
-                                    // hintStyle: TextStyle(
-                                    //   color: Colors.white54,
-                                    // )
                                   ),
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.white),
@@ -156,11 +154,15 @@ class _LoginScreenState extends State<LoginScreen> {
         _isRequesting = true;
       });
       try {
-        await new Future.delayed(const Duration(seconds: 5));
-        // http.Response response = await http.get(URL);
+        await new Future.delayed(const Duration(milliseconds: 300));
+        http.Response response = await http.get(apiUrl);
+        Object data = json.decode(response.body);
 
-        // return json.decode(response.body);
-      } catch (error) {} finally {
+        print(data);
+        return data;
+      } catch (error) {
+        print(error);
+      } finally {
         setState(() {
           _isRequesting = false;
         });
