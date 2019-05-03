@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
 
-final apiUrl = DotEnv().env['API_URL'];
+final baseUrl = DotEnv().env['API_URL'];
 
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
@@ -155,11 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       try {
         await new Future.delayed(const Duration(milliseconds: 300));
-        http.Response response = await http.get(apiUrl);
-        Object data = json.decode(response.body);
 
-        print(data);
-        return data;
+        var uriRequest = Uri.http(baseUrl, '/users', { 'email': _usernameController.text.trim() });
+
+        http.Response response = await http.get(uriRequest);
+
+        return json.decode(response.body);
       } catch (error) {
         print(error);
       } finally {
