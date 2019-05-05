@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
+import 'package:systranca_app/helpers/user.dart';
 
 final baseUrl = DotEnv().env['API_URL'];
 
@@ -160,10 +161,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
         http.Response response = await http.get(uriRequest);
 
+        final data  = json.decode(response.body)['data'][0];
+
         Navigator.pushNamed(
           context,
           '/home',
-          arguments: json.decode(response.body)
+          arguments: User(
+            data['name'],
+            data['_id'],
+          )
         );
 
         return;
