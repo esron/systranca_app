@@ -16,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _pinCodeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final User user = ModalRoute.of(context).settings.arguments;
@@ -75,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         tooltip: 'Destrancar porta',
                         color: Colors.black,
                         onPressed: () async {
-                          await _showUnlockDialog();
+                          await _showUnlockDialog(user);
                         },
                       ),
                     ),
@@ -96,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _showUnlockDialog() async {
+  Future<void> _showUnlockDialog(User user) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -108,6 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    controller: _pinCodeController,
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -132,7 +135,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             FlatButton(
               child: Text('Destrancar'),
-              onPressed: () {
+              onPressed: () async {
+                var uriRequest = Uri.http(baseUrl, '/door');
+
+                http.Response response = await http.post(
+                  uriRequest,
+                  body: {
+                    'userId': user.id,
+                    'pinCode': _pinCodeController.text,
+                  },
+                );
+
+                print(json.decode(response.body));
+
                 Navigator.of(context).pop();
               },
             ),
