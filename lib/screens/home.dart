@@ -88,18 +88,36 @@ class _HomeScreenState extends State<HomeScreen> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Rewind and remember'),
+          title: Text('Insira o seu Pin'),
           content: SingleChildScrollView(
-            child: ListBody(
+            child: Row(
               children: <Widget>[
-                Text('You will never be satisfied.'),
-                Text('You\’re like me. I’m never satisfied.'),
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    textAlign: TextAlign.center,
+                    autofocus: true,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Pin',
+                      hintText: 'Ex.: 1010',
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Regret'),
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Destrancar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
