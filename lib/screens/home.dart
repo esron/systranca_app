@@ -37,7 +37,42 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             child: Center(
-              child: Text('Olar'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.amber[900],
+                      boxShadow: [
+                        new BoxShadow(
+                          color: Colors.black,
+                          offset: new Offset(3.0, 3.0),
+                          blurRadius: 20.0,
+                          spreadRadius: 1.0
+                        )
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.lock_open),
+                      iconSize: 150.0,
+                      tooltip: 'Destrancar porta',
+                      color: Colors.black,
+                      onPressed: () {},
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Destrancar Porta',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
