@@ -8,7 +8,7 @@ Future main() async {
 
   runApp(
     MaterialApp(
-      title: 'Shrine',
+      title: 'SysTranca',
       initialRoute: _initialRoute,
       routes: routes
     )
