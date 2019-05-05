@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         tooltip: 'Destrancar porta',
                         color: Colors.black,
                         onPressed: () async {
-                          await _neverSatisfied();
+                          await _showUnlockDialog();
                         },
                       ),
                     ),
@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _neverSatisfied() async {
+  Future<void> _showUnlockDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
