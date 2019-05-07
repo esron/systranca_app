@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
+import 'package:systranca_app/helpers/user.dart';
 
-const URL =  'https://';
+final baseUrl = DotEnv().env['API_URL'];
+
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
   @override
@@ -32,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'SYSTRANCA',
+          'SysTranca',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.amber[900],
@@ -98,10 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: 'Username',
-                                    // hintText: 'as',
-                                    // hintStyle: TextStyle(
-                                    //   color: Colors.white54,
-                                    // )
                                   ),
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.white),
@@ -156,11 +155,27 @@ class _LoginScreenState extends State<LoginScreen> {
         _isRequesting = true;
       });
       try {
-        await new Future.delayed(const Duration(seconds: 5));
-        // http.Response response = await http.get(URL);
+        await new Future.delayed(const Duration(milliseconds: 300));
 
-        // return json.decode(response.body);
-      } catch (error) {} finally {
+        var uriRequest = Uri.http(baseUrl, '/users', { 'email': _usernameController.text.trim() });
+
+        http.Response response = await http.get(uriRequest);
+
+        final data  = json.decode(response.body)['data'][0];
+
+        Navigator.pushNamed(
+          context,
+          '/home',
+          arguments: User(
+            data['name'],
+            data['_id'],
+          )
+        );
+
+        return;
+      } catch (error) {
+        print(error);
+      } finally {
         setState(() {
           _isRequesting = false;
         });
