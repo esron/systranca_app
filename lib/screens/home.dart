@@ -6,8 +6,10 @@ import 'dart:convert';
 
 import 'package:systranca_app/themes/login.dart';
 import 'package:systranca_app/helpers/user.dart';
+import 'package:systranca_app/helpers/validators.dart';
 
 final baseUrl = DotEnv().env['API_URL'];
+
 class HomeScreen extends StatefulWidget {
   static String tag = '/home';
 
@@ -19,107 +21,154 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _pinCodeController = TextEditingController();
 
   @override
+  void dispose() {
+    _pinCodeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final User user = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'SysTranca',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white, fontSize: 24.0),
         ),
-        backgroundColor: Colors.amber[900],
+        backgroundColor: Colors.blue[900],
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.grey[200],
       body: Theme(
         data: loginTheme,
         child: Builder(
-          builder: (BuildContext context) => Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.grey[700],
-                  Colors.black,
-                ],
-              ),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+          builder: (BuildContext context) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'Olá ${user.name}',
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      color: Colors.white,
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
+                    child: Text(
+                      'Olá, ${user.name}!',
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.amber[900],
-                        boxShadow: [
-                          new BoxShadow(
-                            color: Colors.black,
-                            offset: new Offset(3.0, 3.0),
-                            blurRadius: 20.0,
-                            spreadRadius: 1.0
-                          )
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.lock_open),
-                        iconSize: 150.0,
-                        tooltip: 'Destrancar porta',
+                    padding: EdgeInsets.only(left: 16.0, bottom: 50.0),
+                    child: Text(
+                      'Por favor, escolha um portão para ativá-lo.',
+                      style: TextStyle(
+                        fontSize: 20.0,
                         color: Colors.black,
-                        onPressed: () async {
-                          await _showUnlockDialog(user);
-                        },
                       ),
                     ),
                   ),
-                  Text(
-                    'Destrancar Porta',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
-                  )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        height: 90.0,
+                        padding: const EdgeInsets.all(16.0),
+                        child: MaterialButton(
+                          textColor: Colors.white,
+                          color: Colors.blue[600],
+                          onPressed: () async {
+                            await _showUnlockDialog(user);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.directions_walk,
+                                size: 32.0,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Pedestre',
+                                  style: TextStyle(fontSize: 22.0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 90.0,
+                        padding: const EdgeInsets.all(16.0),
+                        child: MaterialButton(
+                          textColor: Colors.white,
+                          color: Colors.blue[600],
+                          onPressed: () async {
+                            await _showUnlockDialog(user);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.directions_car,
+                                size: 32.0,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Veículos',
+                                  style: TextStyle(fontSize: 22.0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-            ),
-          ),
         ),
-      )
+      ),
     );
   }
 
   Future<void> _showUnlockDialog(User user) async {
+    bool _obscureText = true;
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Insira o seu Pin'),
+          title: Text('Insira o seu pin'),
+          titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 0.0, 0.0),
           content: SingleChildScrollView(
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
                     controller: _pinCodeController,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
                     autofocus: true,
-                    obscureText: true,
+                    obscureText: _obscureText,
+                    validator: validatePin,
                     decoration: InputDecoration(
                       labelText: 'Pin',
                       hintText: 'Ex.: 1010',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.fromRGBO(33, 150, 243, 0.5),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -128,13 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: <Widget>[
             FlatButton(
+              textColor: Colors.red,
               child: Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: Text('Destrancar'),
+              child: Text('Enviar'),
               onPressed: () async {
                 var uriRequest = Uri.http(baseUrl, '/door');
 

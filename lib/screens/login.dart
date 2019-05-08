@@ -18,15 +18,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _usernameController = TextEditingController();
-  final FocusNode _usernameFocus = FocusNode();
+  final TextEditingController _emailController = TextEditingController();
+  final FocusNode _emailFocus = FocusNode();
 
   bool _isRequesting = false;
-  bool _isLocked = true;
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -34,102 +33,73 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'SysTranca',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white, fontSize: 24.0),
         ),
-        backgroundColor: Colors.amber[900],
+        backgroundColor: Colors.blue[900],
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.grey[200],
       body: Theme(
         data: loginTheme,
         child: Builder(
-          builder: (BuildContext context) => Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.grey[700],
-                      Colors.black,
-                    ],
+          builder: (BuildContext context) => Center(
+      child: _isRequesting
+          ? CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Colors.blue[900]),
+            )
+          : Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.symmetric(
+                    vertical: 32.0, horizontal: 16.0),
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 32.0),
+                    child: Image.asset(
+                      'images/logo.png',
+                      height: 200.0,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: _isRequesting
-                      ? CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : Form(
-                          key: _formKey,
-                          child: ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 32.0, horizontal: 16.0),
-                            children: <Widget>[
-                              Container(
-                                width: 100.0,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.amber[900],
-                                  boxShadow: [
-                                    new BoxShadow(
-                                      color: Colors.black,
-                                      offset: new Offset(3.0, 3.0),
-                                      blurRadius: 20.0,
-                                      spreadRadius: 1.0
-                                    )
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                margin: const EdgeInsets.only(bottom: 32.0),
-                                child: Icon(
-                                  _isLocked
-                                      ? Icons.lock_outline
-                                      : Icons.lock_open,
-                                  size: 120.0,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              TextFormField(
-                                  controller: _usernameController,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
-                                  validator: validateUsername,
-                                  focusNode: _usernameFocus,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Username',
-                                  ),
-                                  style: TextStyle(
-                                      fontSize: 20.0, color: Colors.white),
-                                  onFieldSubmitted: (value) async {
-                                    _usernameFocus.unfocus();
-                                    await submitRequest(context);
-                                  }),
-                              Container(
-                                height: 50.0,
-                                margin: const EdgeInsets.only(top: 32.0),
-                                child: RaisedButton(
-                                  onPressed: () async {
-                                    await submitRequest(context);
-                                  },
-                                  color: Colors.amber[900],
-                                  child: Text(
-                                    'ENVIAR',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                  TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      validator: validateEmail,
+                      focusNode: _emailFocus,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'E-mail',
+                      ),
+                      style: TextStyle(
+                          fontSize: 20.0, color: Colors.blue[900]),
+                      onFieldSubmitted: (value) async {
+                        _emailFocus.unfocus();
+                        await submitRequest(context);
+                      }),
+                  Container(
+                    height: 50.0,
+                    margin: const EdgeInsets.only(top: 32.0),
+                    child: RaisedButton(
+                      onPressed: () async {
+                        await submitRequest(context);
+                      },
+                      color: Colors.blue[600],
+                      child: Text(
+                        'ENVIAR',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
                         ),
-                ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+            ),
+          ),
         ),
       ),
     );
@@ -151,26 +121,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> submitRequest(context) async {
     if (_formKey.currentState.validate()) {
       setState(() {
-        _isLocked = false;
         _isRequesting = true;
       });
+
       try {
         await new Future.delayed(const Duration(milliseconds: 300));
 
-        var uriRequest = Uri.http(baseUrl, '/users', { 'email': _usernameController.text.trim() });
+        // var uriRequest = Uri.http(baseUrl, '/users', { 'email': _emailController.text.trim() });
 
-        http.Response response = await http.get(uriRequest);
+        // http.Response response = await http.get(uriRequest);
 
-        final data  = json.decode(response.body)['data'][0];
+        // final data  = json.decode(response.body)['data'][0];
 
-        Navigator.pushNamed(
-          context,
-          '/home',
-          arguments: User(
-            data['name'],
-            data['_id'],
-          )
-        );
+        Navigator.pushReplacementNamed(context, '/home',
+            arguments: User(
+                // data['name'],
+                // data['_id'],
+                'Gabriel',
+                '1'));
 
         return;
       } catch (error) {
