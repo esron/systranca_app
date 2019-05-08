@@ -16,8 +16,8 @@ String validateEmail(String value) {
 String validatePin(String pin) {
   if (pin.isEmpty) {
     return 'Insira o pin';
-  } else if (pin.length != 4) {
-    return 'Insira um e-mail válido';
+  } else if (pin.length < 4 || pin.length > 6 || double.parse(pin) != null) {
+    return 'Insira um pin válido';
   } else {
     return null;
   }
