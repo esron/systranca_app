@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 final loginTheme = ThemeData(
-  primaryColor: Colors.white,
-  hintColor: Colors.white,
+  primaryColor: Colors.blue[900],
+  hintColor: Colors.blue[900],
   primarySwatch: Colors.blue,
   dividerColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,
-  cursorColor: Colors.white,
+  cursorColor: Colors.blue[900],
   brightness: Brightness.light,
 
   textTheme: TextTheme(
