@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeController = TextEditingController();
 
   @override
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Padding(
                                 padding: EdgeInsets.only(left: 8.0),
                                 child: Text(
-                                  'Veículos',
+                                  'Veículo',
                                   style: TextStyle(fontSize: 22.0),
                                 ),
                               ),
@@ -134,8 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showUnlockDialog(User user) async {
-    bool _obscureText = true;
-
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -144,66 +143,92 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Text('Insira o seu pin'),
           titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 0.0, 0.0),
           content: SingleChildScrollView(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextFormField(
-                    controller: _pinCodeController,
-                    keyboardType: TextInputType.number,
-                    autofocus: true,
-                    obscureText: _obscureText,
-                    validator: validatePin,
-                    decoration: InputDecoration(
-                      labelText: 'Pin',
-                      hintText: 'Ex.: 1010',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Color.fromRGBO(33, 150, 243, 0.5),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureText = !_obscureText;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: PinDialogContent(_pinCodeController, _formKey),
           ),
           actions: <Widget>[
             FlatButton(
               textColor: Colors.red,
-              child: Text('Cancelar'),
+              child: Text('CANCELAR'),
               onPressed: () {
+                _pinCodeController.clear();
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: Text('Enviar'),
+              child: Text('ENVIAR'),
               onPressed: () async {
-                var uriRequest = Uri.http(baseUrl, '/door');
+                if (_formKey.currentState.validate()) {
+                  var uriRequest = Uri.http(baseUrl, '/door');
 
-                http.Response response = await http.post(
-                  uriRequest,
-                  body: {
-                    'userId': user.id,
-                    'pinCode': _pinCodeController.text,
-                  },
-                );
+                  http.Response response = await http.post(
+                    uriRequest,
+                    body: {
+                      'userId': user.id,
+                      'pinCode': _pinCodeController.text,
+                    },
+                  );
 
-                print(json.decode(response.body));
-
-                Navigator.of(context).pop();
+                  _pinCodeController.clear();
+                  Navigator.of(context).pop();
+                } else {}
               },
             ),
           ],
         );
       },
+    );
+  }
+}
+
+class PinDialogContent extends StatefulWidget {
+  PinDialogContent(
+    this._pinCodeController,
+    this._formKey, {
+    Key key,
+  }) : super(key: key);
+
+  final TextEditingController _pinCodeController;
+  final GlobalKey<FormState> _formKey;
+
+  @override
+  _PinDialogContentState createState() => _PinDialogContentState();
+}
+
+class _PinDialogContentState extends State<PinDialogContent> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Form(
+            key: widget._formKey,
+            child: TextFormField(
+              controller: widget._pinCodeController,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              obscureText: _obscureText,
+              validator: validatePin,
+              decoration: InputDecoration(
+                labelText: 'Pin',
+                hintText: 'Ex.: 1010',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                    color: Color.fromRGBO(33, 150, 243, 0.5),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
