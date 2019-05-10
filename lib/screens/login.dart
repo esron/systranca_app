@@ -125,8 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        await new Future.delayed(const Duration(milliseconds: 300));
-
         var uriRequest = Uri.http(
             baseUrl, '/users', {'email': _emailController.text.trim()});
 

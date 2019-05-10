@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 16.0, bottom: 50.0),
+                    padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 50.0),
                     child: Text(
                       'Por favor, escolha um portão para ativá-lo.',
                       style: TextStyle(
@@ -70,57 +70,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        height: 90.0,
-                        padding: const EdgeInsets.all(16.0),
-                        child: MaterialButton(
-                          textColor: Colors.white,
-                          color: Colors.blue[600],
-                          onPressed: () async {
-                            await _showUnlockDialog(user);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.directions_walk,
-                                size: 32.0,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: Text(
-                                  'Pedestre',
-                                  style: TextStyle(fontSize: 22.0),
+                      Expanded(
+                        child: Container(
+                          height: 50.0,
+                          padding:
+                              const EdgeInsets.only(right: 8.0, left: 16.0),
+                          child: MaterialButton(
+                            textColor: Colors.white,
+                            color: Colors.blue[600],
+                            onPressed: () async {
+                              await _showUnlockDialog(user);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.directions_walk,
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                    'Pedestre',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      Container(
-                        height: 90.0,
-                        padding: const EdgeInsets.all(16.0),
-                        child: MaterialButton(
-                          textColor: Colors.white,
-                          color: Colors.blue[600],
-                          onPressed: () async {
-                            await _showUnlockDialog(user);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.directions_car,
-                                size: 32.0,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: Text(
-                                  'Veículo',
-                                  style: TextStyle(fontSize: 22.0),
+                      Expanded(
+                        child: Container(
+                          height: 50.0,
+                          padding:
+                              const EdgeInsets.only(left: 8.0, right: 16.0),
+                          child: MaterialButton(
+                            textColor: Colors.white,
+                            color: Colors.blue[600],
+                            onPressed: () async {
+                              await _showUnlockDialog(user);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.directions_car,
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Text(
+                                    'Veículo',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
