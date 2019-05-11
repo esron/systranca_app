@@ -9,12 +9,12 @@ addons:
     packages:
       - lib32stdc++6
 install:
-  - cd /
+  - cd $HOME
   - git clone https://github.com/flutter/flutter.git -b beta
-  - ./flutter/bin/flutter doctor
+  - $HOME/flutter/bin/flutter doctor
 script:
   - echo 'API_URL=192.168.0.104:3000\n' >> .env
-  - ./flutter/bin/flutter $COMMAND
+  - $HOME/flutter/bin/flutter $COMMAND
 cache:
   directories:
     - $HOME/.pub-cache
