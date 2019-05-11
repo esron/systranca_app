@@ -1,5 +1,9 @@
 language: dart
 dist: xenial
+# safelist
+branches:
+  only:
+  - master
 matrix:
   include:
     - name: Analyze
