@@ -13,7 +13,10 @@ addons:
       - lib32stdc++6
 install:
   - cd $HOME
-  - git clone https://github.com/flutter/flutter.git -b beta
+  - |
+    if [ ! -d flutter ]; then
+      git clone https://github.com/flutter/flutter.git -b beta
+    fi
   - $HOME/flutter/bin/flutter doctor
 script:
   - cd build/esron/systranca_app
@@ -21,4 +24,5 @@ script:
   - $HOME/flutter/bin/flutter $COMMAND
 cache:
   directories:
+    - $HOME/flutter
     - $HOME/.pub-cache
