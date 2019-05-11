@@ -14,7 +14,6 @@ install:
   - git clone https://github.com/flutter/flutter.git -b beta
   - ./flutter/bin/flutter doctor
 script:
-  - cd app
   - echo 'API_URL=192.168.0.104:3000\n' >> .env
   - ../flutter/bin/flutter $COMMAND
 cache:
