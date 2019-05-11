@@ -9,13 +9,12 @@ addons:
     packages:
       - lib32stdc++6
 install:
-  - pwd
   - cd $HOME
   - git clone https://github.com/flutter/flutter.git -b beta
   - $HOME/flutter/bin/flutter doctor
 script:
-  - ls
   - cd build/esron/systranca_app
+  - touch .env
   - $HOME/flutter/bin/flutter $COMMAND
 cache:
   directories:

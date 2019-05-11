@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (_formKey.currentState.validate()) {
                   var uriRequest = Uri.http(baseUrl, '/door');
 
-                  http.Response response = await http.post(
+                  await http.post(
                     uriRequest,
                     body: {
                       'userId': user.id,
