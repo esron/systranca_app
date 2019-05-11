@@ -13,6 +13,7 @@ addons:
       - lib32stdc++6
 install:
   - cd $HOME
+  - ls
   - |
     if [ ! -d flutter ]; then
       git clone https://github.com/flutter/flutter.git -b beta
