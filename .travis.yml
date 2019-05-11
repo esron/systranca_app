@@ -1,0 +1,21 @@
+language: dart
+dist: xenial
+matrix:
+  include:
+    - name: Analyze
+      env: COMMAND=analyze
+addons:
+  apt:
+    packages:
+      - lib32stdc++6
+install:
+  - cd $HOME
+  - git clone https://github.com/flutter/flutter.git -b beta
+  - $HOME/flutter/bin/flutter doctor
+script:
+  - cd build/esron/systranca_app
+  - touch .env
+  - $HOME/flutter/bin/flutter $COMMAND
+cache:
+  directories:
+    - $HOME/.pub-cache
