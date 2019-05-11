@@ -1,5 +1,8 @@
 language: dart
 dist: xenial
+branches:
+  only:
+  - master
 matrix:
   include:
     - name: Analyze
