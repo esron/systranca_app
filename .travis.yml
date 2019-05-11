@@ -15,7 +15,7 @@ install:
   - ./flutter/bin/flutter doctor
 script:
   - echo 'API_URL=192.168.0.104:3000\n' >> .env
-  - ../flutter/bin/flutter $COMMAND
+  - ./flutter/bin/flutter $COMMAND
 cache:
   directories:
     - $HOME/.pub-cache
