@@ -1,0 +1,15 @@
+{
+  "login": {
+    "email": "Email Address",
+    "submit": "Submit"
+  },
+  "home": {
+    "hello": "Hello",
+    "choose_gate": "Please choose a gate to activate it.",
+    "pedestrian": "Pedestrian",
+    "vehicle": "Vehicle",
+    "submit": "Submit",
+    "cancel": "CANCEL",
+    "insert_pin": "Insert your pin"
+  }
+}

@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:systranca_app/main.dart';
 import 'dart:async';
 
 import 'package:systranca_app/themes/login.dart';
@@ -26,9 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Locale getSelectedLocale(String value) => MyApp.list.firstWhere((locale) => locale.languageCode == value);
+
   @override
   Widget build(BuildContext context) {
+    var data = EasyLocalizationProvider.of(context).data;
     final User user = ModalRoute.of(context).settings.arguments;
+    final lang = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,6 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.white, fontSize: 24.0),
         ),
         backgroundColor: Colors.blue[900],
+        actions: <Widget>[
+          DropdownButton<String>(
+            items: MyApp.list.map((Locale value) {
+              return DropdownMenuItem<String>(
+                value: value.languageCode,
+                child: Text(value.languageCode.toUpperCase()),
+              );
+            }).toList(),
+            onChanged: (value) {
+              this.setState(() {
+                data.changeLocale(getSelectedLocale(value));
+              });
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.grey[200],
       body: Theme(
@@ -50,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
                     child: Text(
-                      'Olá, ${user.name}!',
+                      '${lang.tr('home.hello')}, ${user.name}!',
                       style: TextStyle(
                         fontSize: 30.0,
                         color: Colors.blue,
@@ -60,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 50.0),
                     child: Text(
-                      'Por favor, escolha um portão para ativá-lo.',
+                      lang.tr('home.choose_gate'),
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.black,
@@ -90,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Pedestre',
+                                    lang.tr("home.pedestrian"),
                                   ),
                                 ),
                               ],
@@ -118,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    'Veículo',
+                                    lang.tr("home.vehicle"),
                                   ),
                                 ),
                               ],
