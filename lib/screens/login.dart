@@ -12,12 +12,14 @@ final baseUrl = DotEnv().env['API_URL'];
 
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffold = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
   final FocusNode _emailFocus = FocusNode();
 
@@ -32,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffold,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -44,69 +47,70 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Theme(
         data: loginTheme,
         child: Builder(
-          builder: (BuildContext context) => Center(
+          builder: (BuildContext context) =>
+              Center(
                 child: _isRequesting
                     ? CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blue[900]),
-                      )
+                  valueColor:
+                  AlwaysStoppedAnimation<Color>(Colors.blue[900]),
+                )
                     : Form(
-                        key: _formKey,
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 32.0, horizontal: 16.0),
-                          children: <Widget>[
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 32.0),
-                              child: Image.asset(
-                                'images/logo.png',
-                                height: 200.0,
-                              ),
-                            ),
-                            TextFormField(
-                                controller: _emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.done,
-                                validator: validateEmail,
-                                focusNode: _emailFocus,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'E-mail',
-                                ),
-                                style: TextStyle(
-                                    fontSize: 20.0, color: Colors.blue[900]),
-                                onFieldSubmitted: (value) async {
-                                  _emailFocus.unfocus();
-                                  await submitRequest(context);
-                                }),
-                            Container(
-                              height: 50.0,
-                              margin: const EdgeInsets.only(top: 32.0),
-                              child: RaisedButton(
-                                onPressed: () async {
-                                  await submitRequest(context);
-                                },
-                                color: Colors.blue[600],
-                                child: Text(
-                                  'ENVIAR',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 32.0, horizontal: 16.0),
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 32.0),
+                        child: Image.asset(
+                          'images/logo.png',
+                          height: 200.0,
                         ),
                       ),
+                      TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.done,
+                          validator: validateEmail,
+                          focusNode: _emailFocus,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'E-mail',
+                          ),
+                          style: TextStyle(
+                              fontSize: 20.0, color: Colors.blue[900]),
+                          onFieldSubmitted: (value) async {
+                            _emailFocus.unfocus();
+                            await submitRequest(context);
+                          }),
+                      Container(
+                        height: 50.0,
+                        margin: const EdgeInsets.only(top: 32.0),
+                        child: RaisedButton(
+                          onPressed: () async {
+                            await submitRequest(context);
+                          },
+                          color: Colors.blue[600],
+                          child: Text(
+                            'ENVIAR',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
         ),
       ),
     );
   }
 
-  Widget buildSnackbar(
-      String text, Color bgColor, Color textColor, Duration duration) {
+  Widget buildSnackbar(String text, Color bgColor, Color textColor,
+      Duration duration) {
     return SnackBar(
       content: Text(
         text,
@@ -140,12 +144,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return;
       } catch (error) {
+        _scaffold.currentState.showSnackBar(buildSnackbar(
+            "No user was found", Colors.red, Colors.white,
+            Duration(seconds: 2)));
         print(error);
       } finally {
         setState(() {
           _isRequesting = false;
         });
       }
+    } else {
+      _scaffold.currentState.showSnackBar(buildSnackbar(
+          validateEmail(_emailController.value.text), Colors.red, Colors.white,
+          Duration(seconds: 2)));
     }
   }
 }
