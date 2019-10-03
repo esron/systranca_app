@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -31,6 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -71,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 focusNode: _emailFocus,
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
-                                  labelText: 'E-mail',
+                                  labelText: lang.tr("login.email"),
                                 ),
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.blue[900]),
@@ -88,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 color: Colors.blue[600],
                                 child: Text(
-                                  'ENVIAR',
+                                  '',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.white,

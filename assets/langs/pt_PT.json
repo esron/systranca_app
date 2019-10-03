@@ -1,0 +1,15 @@
+{
+  "login": {
+    "email": "E-mail",
+    "submit": "ENVIAR"
+  },
+  "home": {
+    "hello": "Olá",
+    "choose_gate": "Por favor, escolha um portão para ativá-lo.",
+    "pedestrian": "Pedestre",
+    "vehicle": "Veículo",
+    "submit": "ENVIAR",
+    "cancel": "CANCELAR",
+    "insert_pin": "Insira o seu pin"
+  }
+}
