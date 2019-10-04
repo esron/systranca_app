@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
 import 'package:systranca_app/helpers/user.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 final baseUrl = DotEnv().env['API_URL'];
 
@@ -131,7 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
         http.Response response = await http.get(uriRequest);
 
         final data = json.decode(response.body)['data'][0];
-
+        final storage = new FlutterSecureStorage();
+        await storage.write(key: "userID",value: data['_id']);
         Navigator.pushReplacementNamed(context, '/home',
             arguments: User(
               data['name'],
