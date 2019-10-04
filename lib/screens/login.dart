@@ -75,18 +75,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: OutlineInputBorder(),
                                   labelText: 'E-mail',
                                 ),
+                                
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.blue[900]),
                                 onFieldSubmitted: (value) async {
                                   _emailFocus.unfocus();
-                                  await submitRequest(context);
+                                  if(_formKey.currentState.validate()){
+                                    await submitRequest(context);
+                                  }
                                 }),
                             Container(
                               height: 50.0,
                               margin: const EdgeInsets.only(top: 32.0),
                               child: RaisedButton(
                                 onPressed: () async {
-                                  await submitRequest(context);
+                                  if(_formKey.currentState.validate()){
+                                    await submitRequest(context);
+                                  }
                                 },
                                 color: Colors.blue[600],
                                 child: Text(
@@ -143,6 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return;
       } catch (error) {
+        Scaffold.of(context)..hideCurrentSnackBar()..showSnackBar(buildSnackbar("No User Found with this email", Colors.red, Colors.white, Duration(seconds: 3)));
         print(error);
       } finally {
         setState(() {
