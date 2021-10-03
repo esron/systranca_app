@@ -1,7 +1,5 @@
 # Systranca
 
-[![Build Status](https://travis-ci.com/esron/systranca_app.svg?branch=master)](https://travis-ci.com/esron/systranca_app)
-
 An app for home automation.
 
 Consumer of [Systranca Server](https://github.com/esron/systranca-server)
