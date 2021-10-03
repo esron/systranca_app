@@ -6,12 +6,11 @@ final loginTheme = ThemeData(
   primarySwatch: Colors.blue,
   dividerColor: Colors.white,
   scaffoldBackgroundColor: Colors.white,
-  cursorColor: Colors.blue[900],
   brightness: Brightness.light,
 
   textTheme: TextTheme(
-    display3: TextStyle(fontSize: 12.0, color: Colors.white70),
+    headline2: TextStyle(fontSize: 12.0, color: Colors.white70),
     button: TextStyle(fontSize: 16, color: Colors.white), //Used
     caption: TextStyle(fontSize: 14, color: Colors.white), //Used
-  ),
+  ), textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.blue[900]),
 );
