@@ -1,18 +1,17 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:systranca_app/main.dart';
-import 'dart:async';
+import 'package:http/http.dart' as http;
 
 import 'package:systranca_app/themes/login.dart';
 import 'package:systranca_app/helpers/user.dart';
 import 'package:systranca_app/helpers/validators.dart';
 
-final baseUrl = DotEnv().env['API_URL'];
+final baseUrl = dotenv.get('API_URL');
 
 class HomeScreen extends StatefulWidget {
   static String tag = '/home';
+
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -28,129 +27,108 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Locale getSelectedLocale(String value) => MyApp.list.firstWhere((locale) => locale.languageCode == value);
-
   @override
   Widget build(BuildContext context) {
-    var data = EasyLocalizationProvider.of(context).data;
-    final User user = ModalRoute.of(context).settings.arguments;
-    final lang = AppLocalizations.of(context);
+    final user = ModalRoute.of(context)!.settings.arguments as User;
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'SysTranca',
           style: TextStyle(color: Colors.white, fontSize: 24.0),
         ),
         backgroundColor: Colors.blue[900],
-        actions: <Widget>[
-          DropdownButton<String>(
-            items: MyApp.list.map((Locale value) {
-              return DropdownMenuItem<String>(
-                value: value.languageCode,
-                child: Text(value.languageCode.toUpperCase()),
-              );
-            }).toList(),
-            onChanged: (value) {
-              this.setState(() {
-                data.changeLocale(getSelectedLocale(value));
-              });
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.grey[200],
       body: Theme(
         data: loginTheme,
         child: Builder(
           builder: (BuildContext context) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
+                child: Text(
+                  'Olá, ${user.name}!',
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 50.0),
+                child: Text(
+                  'Por favor, escolha um portão para ativá-lo.',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
-                    child: Text(
-                      '${lang.tr('home.hello')}, ${user.name}!',
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        color: Colors.blue,
+                  Expanded(
+                    child: Container(
+                      height: 50.0,
+                      padding: const EdgeInsets.only(right: 8.0, left: 16.0),
+                      child: MaterialButton(
+                        textColor: Colors.white,
+                        color: Colors.blue[600],
+                        onPressed: () async {
+                          await _showUnlockDialog(user);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            Icon(
+                              Icons.directions_walk,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                'Pedestre',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 50.0),
-                    child: Text(
-                      lang.tr('home.choose_gate'),
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.black,
+                  Expanded(
+                    child: Container(
+                      height: 50.0,
+                      padding: const EdgeInsets.only(left: 8.0, right: 16.0),
+                      child: MaterialButton(
+                        textColor: Colors.white,
+                        color: Colors.blue[600],
+                        onPressed: () async {
+                          await _showUnlockDialog(user);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            Icon(
+                              Icons.directions_car,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                'Veículo',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          height: 50.0,
-                          padding:
-                              const EdgeInsets.only(right: 8.0, left: 16.0),
-                          child: MaterialButton(
-                            textColor: Colors.white,
-                            color: Colors.blue[600],
-                            onPressed: () async {
-                              await _showUnlockDialog(user);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.directions_walk,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    lang.tr("home.pedestrian"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 50.0,
-                          padding:
-                              const EdgeInsets.only(left: 8.0, right: 16.0),
-                          child: MaterialButton(
-                            textColor: Colors.white,
-                            color: Colors.blue[600],
-                            onPressed: () async {
-                              await _showUnlockDialog(user);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.directions_car,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    lang.tr("home.vehicle"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
+            ],
+          ),
         ),
       ),
     );
@@ -162,24 +140,27 @@ class _HomeScreenState extends State<HomeScreen> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Insira o seu pin'),
-          titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 0.0, 0.0),
+          title: const Text('Insira o seu pin'),
+          titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 0.0, 0.0),
           content: SingleChildScrollView(
-            child: PinDialogContent(_pinCodeController, _formKey),
+            child: PinDialogContent(
+              _pinCodeController,
+              _formKey,
+              key: const Key(''),
+            ),
           ),
           actions: <Widget>[
-            FlatButton(
-              textColor: Colors.red,
-              child: Text('CANCELAR'),
+            TextButton(
+              child: const Text('CANCELAR'),
               onPressed: () {
                 _pinCodeController.clear();
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
-              child: Text('ENVIAR'),
+            TextButton(
+              child: const Text('ENVIAR'),
               onPressed: () async {
-                if (_formKey.currentState.validate()) {
+                if (_formKey.currentState!.validate()) {
                   var uriRequest = Uri.http(baseUrl, '/door');
 
                   await http.post(
@@ -203,10 +184,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class PinDialogContent extends StatefulWidget {
-  PinDialogContent(
+  const PinDialogContent(
     this._pinCodeController,
     this._formKey, {
-    Key key,
+    required Key key,
   }) : super(key: key);
 
   final TextEditingController _pinCodeController;
@@ -238,7 +219,7 @@ class _PinDialogContentState extends State<PinDialogContent> {
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureText ? Icons.visibility : Icons.visibility_off,
-                    color: Color.fromRGBO(33, 150, 243, 0.5),
+                    color: const Color.fromRGBO(33, 150, 243, 0.5),
                   ),
                   onPressed: () {
                     setState(() {

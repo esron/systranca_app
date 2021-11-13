@@ -1,18 +1,19 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/themes/login.dart';
+import 'package:systranca_app/helpers/validators.dart';
 import 'package:systranca_app/helpers/user.dart';
 
-final baseUrl = DotEnv().env['API_URL'];
+final baseUrl = dotenv.get('API_URL');
 
 class LoginScreen extends StatefulWidget {
   static String tag = '/';
+
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -32,80 +33,79 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = AppLocalizations.of(context);
-
+    var titleData = 'SysTranca';
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'SysTranca',
-          style: TextStyle(color: Colors.white, fontSize: 24.0),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            titleData,
+            style: const TextStyle(color: Colors.white, fontSize: 24.0),
+          ),
+          backgroundColor: Colors.blue[900],
         ),
-        backgroundColor: Colors.blue[900],
-      ),
-      backgroundColor: Colors.grey[200],
-      body: Theme(
-        data: loginTheme,
-        child: Builder(
-          builder: (BuildContext context) => Center(
-                child: _isRequesting
-                    ? CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blue[900]),
-                      )
-                    : Form(
-                        key: _formKey,
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 32.0, horizontal: 16.0),
-                          children: <Widget>[
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 32.0),
-                              child: Image.asset(
-                                'images/logo.png',
-                                height: 200.0,
-                              ),
-                            ),
-                            TextFormField(
-                                controller: _emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.done,
-                                validator: validateEmail,
-                                focusNode: _emailFocus,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: lang.tr("login.email"),
+        backgroundColor: Colors.grey[200],
+        body: Theme(
+          data: loginTheme,
+          child: Builder(
+              builder: (BuildContext context) => Center(
+                  child: _isRequesting
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.blue[900]!),
+                        )
+                      : Form(
+                          key: _formKey,
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 32.0, horizontal: 16.0),
+                            children: <Widget>[
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 32.0),
+                                child: Image.asset(
+                                  'images/logo.png',
+                                  height: 200.0,
                                 ),
-                                style: TextStyle(
-                                    fontSize: 20.0, color: Colors.blue[900]),
-                                onFieldSubmitted: (value) async {
-                                  _emailFocus.unfocus();
-                                  await submitRequest(context);
-                                }),
-                            Container(
-                              height: 50.0,
-                              margin: const EdgeInsets.only(top: 32.0),
-                              child: RaisedButton(
-                                onPressed: () async {
-                                  await submitRequest(context);
-                                },
-                                color: Colors.blue[600],
-                                child: Text(
-                                  '',
+                              ),
+                              TextFormField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.done,
+                                  validator: validateEmail,
+                                  focusNode: _emailFocus,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Email',
+                                  ),
                                   style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.white,
+                                      fontSize: 20.0, color: Colors.blue[900]),
+                                  onFieldSubmitted: (value) async {
+                                    _emailFocus.unfocus();
+                                    await submitRequest(context);
+                                  }),
+                              Container(
+                                height: 50.0,
+                                margin: const EdgeInsets.only(top: 32.0),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    await submitRequest(context);
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.blue[600]!),
+                                  ),
+                                  child: const Text(
+                                    'ENVIAR',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-              ),
-        ),
-      ),
-    );
+                              )
+                            ],
+                          )))),
+        ));
   }
 
   Widget buildSnackbar(
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> submitRequest(context) async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isRequesting = true;
       });
@@ -131,7 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
         var uriRequest = Uri.http(
             baseUrl, '/users', {'email': _emailController.text.trim()});
 
-        http.Response response = await http.get(uriRequest);
+        http.Response response = await http.get(uriRequest,
+            headers: {'x-access-token': dotenv.get('API_TOKEN')});
 
         final data = json.decode(response.body)['data'][0];
 
@@ -143,6 +144,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return;
       } catch (error) {
+        //TODO: Only print when in development
+
+        // ignore: avoid_print
         print(error);
       } finally {
         setState(() {
